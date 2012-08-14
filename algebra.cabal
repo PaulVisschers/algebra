@@ -1,0 +1,18 @@
+Name:                algebra
+Version:             0.1
+Synopsis:            Some algebraic types and type classes.
+Category:            Algebra
+Author:              Paul Visschers
+Build-Type:          Simple
+Cabal-Version:       >=1.6.0.1
+Stability:           experimental
+
+
+Library
+  HS-Source-Dirs:    src
+  Build-Depends:     base >= 4
+  Exposed-Modules:   Data.Algebra
+                     Data.Algebra.Group
+                     Data.Algebra.Ring
+                     Data.Algebra.Module
+                     Data.Vector
