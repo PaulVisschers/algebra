@@ -1,4 +1,4 @@
-{-# LANGUAGE EmptyDataDecls, FlexibleInstances, FunctionalDependencies, GADTs, MultiParamTypeClasses, OverlappingInstances, DataKinds, KindSignatures #-}
+{-# LANGUAGE EmptyDataDecls, FlexibleInstances, FunctionalDependencies, GADTs, MultiParamTypeClasses, OverlappingInstances #-}
 module Data.Vector where
 
 import qualified Prelude as P
@@ -7,9 +7,10 @@ import Data.Foldable (Foldable, foldr, toList)
 
 import Data.Algebra
 
-data Natural = Zero | Succ Natural
+data Zero
+data Succ a
 
-data Vector (n :: Natural) a where
+data Vector n a where
   Nil :: Vector Zero a
   Cons :: Nat n => a -> Vector n a -> Vector (Succ n) a
 
