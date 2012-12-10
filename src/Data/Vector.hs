@@ -1,9 +1,11 @@
-{-# LANGUAGE EmptyDataDecls, FlexibleInstances, FunctionalDependencies, GADTs, MultiParamTypeClasses, OverlappingInstances #-}
+{-# LANGUAGE EmptyDataDecls, FlexibleContexts, FlexibleInstances, FunctionalDependencies, GADTs, MultiParamTypeClasses, OverlappingInstances #-}
 module Data.Vector where
 
 import qualified Prelude as P
-import Prelude (Eq, Show, Ord, Ordering (..), compare, Num, Functor, (==), (.), show, fmap, error, Int, (&&), Bool (..))
+import Prelude hiding (Num (..), Fractional (..), head, tail, zipWith, repeat, sum, foldr, length, unzip, init, last)
 import Data.Foldable (Foldable, foldr, toList)
+import Text.Read
+import Text.Show
 
 import Data.Algebra
 
@@ -23,8 +25,23 @@ instance Ord a => Ord (Vector n a) where
   compare (Cons x xs) (Cons y ys) = if ord == EQ then compare xs ys else ord where
     ord = compare x y
 
-instance Show a => Show (Vector n a) where -- Rudimentary for debugging, clean up.
-  show = show . toList
+instance Show (Vector Zero a) where
+  showsPrec d Nil = showParen (d > 11) $ showString "Nil"
+
+instance (Nat n, Show a, Show (Vector n a)) => Show (Vector (Succ n) a) where
+  showsPrec d (Cons x xs) = showParen (d > 10) $ showString "Cons " . showsPrec 11 x . showString " " . showsPrec 11 xs
+
+instance Read (Vector Zero a) where
+  readPrec = parens $ (prec 11 $ do
+    Ident "Nil" <- lexP
+    return Nil)
+
+instance (Nat n, Read a, Read (Vector n a)) => Read (Vector (Succ n) a) where
+  readPrec = parens (prec 10 $ do
+    Ident "Cons" <- lexP
+    x <- step readPrec
+    xs <- step readPrec
+    return (Cons x xs))
 
 snoc :: a -> Vector n a -> Vector (Succ n) a
 snoc x Nil = Cons x Nil
